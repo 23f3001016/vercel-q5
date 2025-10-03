@@ -24,9 +24,7 @@ class MetricsRequest(BaseModel):
     threshold_ms: float
 
 # Load telemetry bundle at startup
-DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "telemetry.csv")
-df = pd.read_csv(DATA_PATH)
-
+df = pd.read_json("telemetry.json")
 
 @app.get("/")
 def hello():
