@@ -31,8 +31,8 @@ def hello():
     return {"message": "Hello World"}
 
 @app.post("/api/latency")
-async def api_metrics(req: MetricsRequest) -> Dict[str, Any]:
-    result: Dict[str, Any] = {}
+async def api_latency(req: MetricsRequest):
+    result = {}
 
     for region in req.regions:
         subset = df[df["region"] == region]
@@ -47,13 +47,16 @@ async def api_metrics(req: MetricsRequest) -> Dict[str, Any]:
 
         avg_latency = float(subset["latency_ms"].mean())
         p95_latency = float(np.percentile(subset["latency_ms"], 95))
-        avg_uptime = float(subset["uptime_pct"].mean())  # corrected column name
+        avg_uptime = float(subset["uptime_pct"].mean())
         breaches = int((subset["latency_ms"] > req.threshold_ms).sum())
 
         result[region] = {
             "avg_latency": round(avg_latency, 3),
             "p95_latency": round(p95_latency, 3),
-            "avg_uptime": round(avg_uptime, 3),  # still a percentage
+            "avg_uptime": round(avg_uptime, 3),
             "breaches": breaches
         }
-    return result
+
+    # Wrap inside "regions"
+    return {"regions": result}
+
