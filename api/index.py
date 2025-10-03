@@ -30,7 +30,7 @@ df = pd.read_json("telemetry.json")
 def hello():
     return {"message": "Hello World"}
 
-@app.post("/api/metrics")
+@app.post("/api/latency")
 async def api_metrics(req: MetricsRequest) -> Dict[str, Any]:
     result: Dict[str, Any] = {}
 
