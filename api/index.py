@@ -20,6 +20,12 @@ app.add_middleware(
 )
 
 class MetricsRequest(BaseModel):
+    """Request model for the latency API.
+
+    Attributes:
+        regions: A list of regions to query for metrics.
+        threshold_ms: The latency threshold in milliseconds to use for calculating breaches.
+    """
     regions: List[str]
     threshold_ms: float
 
@@ -28,10 +34,26 @@ df = pd.read_json("telemetry.json")
 
 @app.get("/")
 def hello():
+    """Returns a simple greeting.
+
+    Returns:
+        A dictionary with a "message" key and "Hello World" value.
+    """
     return {"message": "Hello World"}
 
 @app.post("/api/latency")
 async def api_latency(req: MetricsRequest):
+    """Calculates latency and uptime metrics for a list of regions.
+
+    Args:
+        req: A MetricsRequest object containing the regions and latency threshold.
+
+    Returns:
+        A dictionary containing the calculated metrics for each region.
+        The keys are the region names, and the values are dictionaries
+        with the following keys: "avg_latency", "p95_latency", "avg_uptime",
+        and "breaches".
+    """
     result = {}
 
     for region in req.regions:
